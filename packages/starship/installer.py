@@ -17,7 +17,7 @@ class StarshipInstaller(BaseInstaller):
         
         os_type = self._detect_os()
         
-        if os_type in ["linux", "macos"]:
+        if os_type in ["linux", "macos", "debian", "redhat", "arch"]:
             cmd = "curl -sS https://starship.rs/install.sh | sh -s -- --yes"
             result = self._run_command(cmd)
             
