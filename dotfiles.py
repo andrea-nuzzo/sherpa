@@ -102,12 +102,18 @@ def handle_install(package_name):
     
     try:
         installer = InstallerFactory.create_installer(package_name)
+        
+        # 1. Install software (binary/package)
         if not installer.is_software_installed():
             installer.install_software()
         else:
             logger.info(f"{package_name} software already installed")
 
+        # 2. Install configuration files (stow)
         installer.install_config()
+        
+        # 3. Setup system integration (shell, etc.)
+        installer.setup_integration()
 
         logger.info(f"{package_name} installation completed")
     except ValueError as e:
