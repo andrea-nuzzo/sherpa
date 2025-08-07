@@ -70,7 +70,13 @@ class BaseInstaller(ABC):
     
     def install_config(self):
         """Install configuration files using stow-like functionality"""
-        pass
+        logger.info(f"Installing configuration for {self.package_name}")
+        
+        if not self._ensure_stow_available():
+            logger.error("Stow is not available, cannot install config")
+            return
+        
+        
 
     def uninstall_config(self):
         """Remove configuration files (remove symlinks)"""
@@ -173,24 +179,44 @@ class BaseInstaller(ABC):
             
             # Verify installation
             if self._command_exists("stow"):
-                logger.info("✅ Stow installed successfully")
+                logger.info("Stow installed successfully")
                 return True
             else:
-                logger.error("❌ Stow installation failed")
+                logger.error("Stow installation failed")
                 return False
                 
         except Exception as e:
-            logger.error(f"❌ Failed to install stow: {e}")
-            logger.info("💡 Please install stow manually and try again")
+            logger.error(f"Failed to install stow: {e}")
+            logger.info("Please install stow manually and try again")
             return False
     
     def _is_config_installed(self):
         """Check if config is already stowed (simple check)."""
         pass
-        
-    def _run_command(self):
+
+    def _run_command(self, command, shell=True, capture_output=True, text=True):
         """Run a shell command and return the result."""
-        pass
+        logger.debug(f"Running command: {command}")
+        
+        try:
+            result = subprocess.run(
+                command,
+                shell=shell,
+                capture_output=capture_output,
+                text=text,
+                check=False # Don't raise exception on non-zero exit
+            )
+            if result.stdout:
+                logger.debug(f"Command output: {result.stdout.strip()}")
+            if result.stderr:
+                logger.debug(f"Command error: {result.stderr.strip()}")
+                
+            return result
+            
+        except Exception as e:
+            logger.error(f"Command execution failed: {e}")
+            raise
+
 
     def _command_exists(self, command):
         """Check if a command exists in PATH."""
