@@ -48,14 +48,13 @@ def create_parser():
         
     return parser
 
-def handle_list():
+def get_available_packages():
     """Return a list of available packages."""
 
     packages_dir = Path("packages")
     available_packages = []
     
     if not packages_dir.exists():
-        print(f"Packages directory '{packages_dir}' does not exist.")
         return available_packages
     
     for package in packages_dir.iterdir():
@@ -68,7 +67,27 @@ def handle_list():
                 
     return sorted(available_packages)
 
+def handle_list():
+    """Handle the list command - show available packages."""
+    available_packages = get_available_packages()
+    
+    if available_packages:
+        print("📦 Available packages:")
+        for package in available_packages:
+            print(f"  • {package}")
+        print(f"\n💡 Use 'dotfiles install <package>' to install")
+    else:
+        print("No packages available.")
+        print("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
+
 def handle_install(package_name):
+    """Install a specified package by name"""
+    packages  = get_available_packages()
+    
+    if package_name not in packages:
+        print(f"Package '{package_name}' is not available.")
+        print(f"📦 Available packages: {', '.join(packages)}")
+        return
     
 def main():
     """Main entry point for the dotfiles manager."""
@@ -77,23 +96,20 @@ def main():
     
     args = parser.parse_args()
     
+    # If no command is provided, show help
     if not args.command:
         parser.print_help()
         return 0
-    
+
+    # Dispatcher for commands
     if args.command == "list":
-        available_packages = handle_list()
-        
-        if available_packages:
-            print("Available packages:")
-            for package in available_packages:
-                print(f" - {package}")
-        else:
-            print("📦 No packages available.")
+        handle_list()
+        return 0
+    
+    elif args.command == "install":
+        handle_install(args.package)
         return 0
     
     
-    
-
 if __name__ == "__main__":
     main()
