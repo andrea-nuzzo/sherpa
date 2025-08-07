@@ -16,6 +16,7 @@ class BaseInstaller(ABC):
         self.package_name = package_name
         self.package_dir = Path("packages") / package_name
         self.config_dir = self.package_dir / "config"
+        self.home_dir = Path.home()
 
         logger.debug(f"Initializing installer for {package_name}")
         
