@@ -1,7 +1,16 @@
-import argparse
-import sys
 import os
+import sys
+import argparse
+import logging
 from pathlib import Path
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(levelname)s - %(name)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
 
 def create_parser():
     """Create and return the argument parser for the dotfiles manager."""
@@ -72,21 +81,21 @@ def handle_list():
     available_packages = get_available_packages()
     
     if available_packages:
-        print("📦 Available packages:")
+        logger.info("📦 Available packages:")
         for package in available_packages:
-            print(f"  • {package}")
-        print(f"\n💡 Use 'dotfiles install <package>' to install")
+            logger.info(f"  • {package}")
+        logger.info(f"\n💡 Use 'dotfiles install <package>' to install")
     else:
-        print("No packages available.")
-        print("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
+        logger.info("No packages available.")
+        logger.info("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
 
 def handle_install(package_name):
     """Install a specified package by name"""
     packages  = get_available_packages()
     
     if package_name not in packages:
-        print(f"Package '{package_name}' is not available.")
-        print(f"📦 Available packages: {', '.join(packages)}")
+        logger.info(f"Package '{package_name}' is not available.")
+        logger.info(f"📦 Available packages: {', '.join(packages)}")
         return
     
 def main():
