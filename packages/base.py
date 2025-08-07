@@ -76,7 +76,21 @@ class BaseInstaller(ABC):
             logger.error("Stow is not available, cannot install config")
             return
         
-        
+        try:
+            # Use stow to symlink config files
+            cmd = f"stow -d {self.package_dir.parent} -t {self.home_dir} {self.package_name}"
+            result = self._run_command(cmd)
+            
+            if result.returncode == 0:
+                logger.info(f"Config installed successfully for {self.package_name}")
+                return True
+            else:
+                logger.error(f"Config installation failed: {result.stderr}")
+                return False
+
+        except Exception as e:
+            logger.error(f"Config installation failed: {e}")
+            return False
 
     def uninstall_config(self):
         """Remove configuration files (remove symlinks)"""
