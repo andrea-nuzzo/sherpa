@@ -96,6 +96,25 @@ class StarshipInstaller(BaseInstaller):
             return Path(binary_location)
         return None
     
+    def _detect_current_shell(self):
+        """Detect current shell."""
+        import os
+        
+        shell_path = os.environ.get('SHELL', '')
+        if shell_path:
+            shell_name = Path(shell_path).name
+            if shell_name in ['bash', 'zsh', 'fish']:
+                return shell_name
+        
+        # Fallback based on OS
+        os_type = self._detect_os()
+        if os_type in ['debian', 'redhat', 'arch', 'linux']:
+            return 'bash'
+        elif os_type == 'macos':
+            return 'zsh'
+        
+        return 'unknown'
+    
     def _setup_bash_integration(self):
         """Add starship to ~/.bashrc"""
         bashrc_path = self.home_dir / '.bashrc'
