@@ -1,11 +1,31 @@
+import os
+import subprocess
+import platform
+import sys
+import shutil
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-import subprocess
-import shutil
-import os
+
+logger = logging.getLogger(__name__)
 
 class BaseInstaller(ABC):
     """Abstract base class for all package installers."""
+    
+    def __init__(self, package_name):
+        self.package_name = package_name
+        self.package_dir = Path("packages") / package_name
+        self.config_dir = self.package_dir / "config"
+
+        logger.debug(f"Initializing installer for {package_name}")
+        
+        # Validate package structure
+        if not self.package_dir.exists():
+            raise FileNotFoundError(f"Package directory not found: {self.package_dir}")
+        if not self.config_dir.exists():
+            raise FileNotFoundError(f"Config directory not found: {self.config_dir}")
+            
+        logger.info(f"Package {package_name} structure validated")
     
     # ==========================================
     # ABSTRACT METHODS - Must be implemented by subclasses
@@ -68,9 +88,101 @@ class BaseInstaller(ABC):
     # UTILITY METHODS - Helper functions
     # ==========================================
     
+    def _detect_os(self):
+        """Detect the operating system."""
+        system = platform.system().lower()
+        
+        if system == "linux":
+            # Check for specific Linux distributions
+            try:
+                with open("/etc/os-release", "r") as f:
+                    os_release = f.read().lower()
+                    if "ubuntu" in os_release or "debian" in os_release:
+                        return "debian"
+                    elif "centos" in os_release or "rhel" in os_release or "fedora" in os_release:
+                        return "redhat"
+                    elif "arch" in os_release:
+                        return "arch"
+                    else:
+                        return "linux"
+            except FileNotFoundError:
+                return "linux"
+        elif system == "darwin":
+            return "macos"
+        elif system == "windows":
+            return "windows"
+        else:
+            return "unknown"
+    
+    def _get_package_manager(self):    
+        """Get the appropriate package manager for the current OS"""
+        os_type = self._detect_os()
+        
+        package_managers = {
+            "debian": [
+                ("apt", "sudo apt update && sudo apt install -y"),
+                ("apt-get", "sudo apt-get update && sudo apt-get install -y")
+            ],
+            "redhat": [
+                ("dnf", "sudo dnf install -y"),
+                ("yum", "sudo yum install -y")
+            ],
+            "arch": [
+                ("pacman", "sudo pacman -S --noconfirm")
+            ],
+            "macos": [
+                ("brew", "brew install")
+            ],
+            "windows": [
+                ("winget", "winget install"),
+                ("choco", "choco install -y")
+            ]
+        }
+        
+        # Get package managers for detected OS
+        managers = package_managers.get(os_type, [])
+        
+        # Return the first available package manager
+        for manager, install_cmd in managers:
+            if self._command_exists(manager):
+                logger.debug(f"Using package manager: {manager}")
+                return manager, install_cmd
+        
+        logger.warning(f"No supported package manager found for OS: {os_type}")
+        return None, None
+    
     def _ensure_stow_available(self):
         """Ensure stow is installed, install if missing"""
-        pass
+        if self._command_exists("stow"):
+            logger.debug("Stow is already available")
+            return True
+        
+        logger.info("📦 Stow not found, attempting to install...")
+        
+        try:
+            package_manager, install_cmd = self._get_package_manager()
+            
+            if not package_manager:
+                logger.error("Cannot install stow: no supported package manager found")
+                return False
+            
+            # Install stow
+            full_command = f"{install_cmd} stow"
+            logger.info(f"Installing stow using: {package_manager}")
+            self._run_command(full_command)
+            
+            # Verify installation
+            if self._command_exists("stow"):
+                logger.info("✅ Stow installed successfully")
+                return True
+            else:
+                logger.error("❌ Stow installation failed")
+                return False
+                
+        except Exception as e:
+            logger.error(f"❌ Failed to install stow: {e}")
+            logger.info("💡 Please install stow manually and try again")
+            return False
     
     def _is_config_installed(self):
         """Check if config is already stowed (simple check)."""
