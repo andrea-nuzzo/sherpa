@@ -83,13 +83,13 @@ def handle_list():
     available_packages = get_available_packages()
     
     if available_packages:
-        logger.info("📦 Available packages:")
+        print("📦 Available packages:")
         for package in available_packages:
-            logger.info(f"  • {package}")
-        logger.info(f"\n💡 Use 'dotfiles install <package>' to install")
+            print(f"  • {package}")
+        print(f"\n💡 Use 'dotfiles install <package>' to install")
     else:
-        logger.info("No packages available.")
-        logger.info("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
+        print("No packages available.")
+        print("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
 
 def handle_install(package_name):
     """Install a specified package by name"""
