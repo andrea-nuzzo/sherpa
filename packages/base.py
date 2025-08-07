@@ -94,7 +94,22 @@ class BaseInstaller(ABC):
 
     def uninstall_config(self):
         """Remove configuration files (remove symlinks)"""
-        pass
+        logger.info(f"Uninstalling config for {self.package_name}")
+        
+        try:
+            cmd = f"stow -d {self.package_dir.parent} -t {self.home_dir} -D {self.package_name}"
+            result = self._run_command(cmd)
+            
+            if result.returncode == 0:
+                logger.info(f"Config uninstalled for {self.package_name}")
+                return True
+            else:
+                logger.error(f"Stow uninstall failed: {result.stderr}")
+                return False
+            
+        except Exception as e:
+            logger.error(f"Config uninstallation failed: {e}")
+            return False
 
     def is_config_installed(self):
         """Check if configuration symlinks are already created."""
