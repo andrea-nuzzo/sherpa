@@ -98,12 +98,16 @@ class BaseInstaller(ABC):
 
     def is_config_installed(self):
         """Check if configuration symlinks are already created."""
-        pass
+        return self._is_config_installed()
     
     def get_status(self):
         """Get installation status of both software and config."""
-        pass
-    
+        return {
+            "package": self.package_name,
+            "software_installed": self.is_software_installed(),
+            "config_installed": self.is_config_installed()
+        }
+
     # ==========================================
     # UTILITY METHODS - Helper functions
     # ==========================================
@@ -206,7 +210,17 @@ class BaseInstaller(ABC):
     
     def _is_config_installed(self):
         """Check if config is already stowed (simple check)."""
-        pass
+        for config_file in self.config_dir.rglob("*"):
+            if config_file.is_file():
+                # Calculate the relative path from config_dir
+                rel_path = config_file.relative_to(self.config_dir)
+                target_path = self.home_dir / rel_path
+
+                # If the target exists and is a symlink pointing to our file
+                if target_path.exists() and target_path.is_symlink():
+                    if target_path.resolve() == config_file.resolve():
+                        return True
+        return False
 
     def _run_command(self, command, shell=True, capture_output=True, text=True):
         """Run a shell command and return the result."""
@@ -230,7 +244,6 @@ class BaseInstaller(ABC):
         except Exception as e:
             logger.error(f"Command execution failed: {e}")
             raise
-
 
     def _command_exists(self, command):
         """Check if a command exists in PATH."""
