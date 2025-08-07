@@ -143,7 +143,7 @@ def handle_remove(package_name):
         installer = InstallerFactory.create_installer(package_name)
         
         # 1. Remove system integration (shell, etc.) - FIRST
-        installer.remove_integration()
+        installer.uninstall_integration()
 
         # 2. Remove configuration files (stow)
         installer.uninstall_config()
