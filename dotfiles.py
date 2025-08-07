@@ -22,7 +22,6 @@ def create_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
             Examples:
-            %(prog)s remove <name package>    # Remove specified package
             %(prog)s status                   # Show status package
             %(prog)s clean --all              # Remove all configurations and packages
 
@@ -56,7 +55,17 @@ def create_parser():
         "package",
         help="Package name to install (e.g., starship)"
     )
-        
+
+    remove_parser = subparsers.add_parser(
+        "remove",
+        help="%(prog)s remove <name package> - Remove specified package"
+    )
+
+    remove_parser.add_argument(
+        "package",
+        help="Package name to uninstall (e.g., starship)"
+    )
+
     return parser
 
 def get_available_packages():
@@ -121,6 +130,32 @@ def handle_install(package_name):
     except Exception as e:
         logger.error(f"Installation failed: {e}")
 
+def handle_remove(package_name):
+    """Remove a specified package by name"""
+    packages = get_available_packages()
+
+    if package_name not in packages:
+        logger.info(f"Package '{package_name}' is not available.")
+        logger.info(f"📦 Available packages: {', '.join(packages)}")
+        return
+
+    try:
+        installer = InstallerFactory.create_installer(package_name)
+        
+        # 1. Remove system integration (shell, etc.) - FIRST
+        installer.remove_integration()
+
+        # 2. Remove configuration files (stow)
+        installer.uninstall_config()
+
+        # 3. Remove system integration (shell, etc.)
+        installer.uninstall_software()
+
+        logger.info(f"{package_name} removal completed")
+    except ValueError as e:
+        logger.error(f"ValueError: {e}")
+    except Exception as e:
+        logger.error(f"Removal failed: {e}")
 
 def main():
     """Main entry point for the dotfiles manager."""
@@ -142,7 +177,11 @@ def main():
     elif args.command == "install":
         handle_install(args.package)
         return 0
-    
-    
+
+    elif args.command == "remove":
+        handle_remove(args.package)
+        return 0
+
+
 if __name__ == "__main__":
     main()

@@ -82,7 +82,22 @@ class StarshipInstaller(BaseInstaller):
             logger.warning(f"Unsupported shell for auto-config: {current_shell}")
             logger.info("💡 Manually add: eval \"$(starship init <your-shell>)\" to your shell config")
             return True  # Not a failure, just manual setup needed
-     
+    
+    def uninstall_integration(self):
+        """Remove shell integration for starship prompt."""
+        logger.info("Removing shell integration...")
+        
+        current_shell = self._detect_current_shell()
+        logger.debug(f"Detected shell: {current_shell}")
+        
+        if current_shell == "bash":
+            return self._remove_bash_integration()
+        elif current_shell == "zsh":
+            return self._remove_zsh_integration()
+        else:
+            logger.warning(f"Unsupported shell for auto-config: {current_shell}")
+            return True  # Not a failure, just manual setup needed
+
     # ==========================================
     # PRIVATE METHODS - Helper functions
     # ==========================================   
@@ -164,3 +179,35 @@ class StarshipInstaller(BaseInstaller):
         except Exception as e:
             logger.error(f"Failed to setup zsh integration: {e}")
             return False
+    
+    def _remove_bash_integration(self):
+        """Remove bash integration for starship prompt."""
+        logger.info("Removing bash integration...")
+        bashrc_path = self.home_dir / '.bashrc'
+
+        if bashrc_path.exists():
+            content = bashrc_path.read_text()
+            if 'eval "$(starship init bash)"' in content:
+                content = content.replace('eval "$(starship init bash)"', '')
+                bashrc_path.write_text(content)
+                logger.info("Removed starship from ~/.bashrc")
+                return True
+
+        logger.warning("Bash integration not found")
+        return False
+    
+    def _remove_zsh_integration(self):
+        """Remove zsh integration for starship prompt."""
+        logger.info("Removing zsh integration...")
+        zshrc_path = self.home_dir / '.zshrc'
+
+        if zshrc_path.exists():
+            content = zshrc_path.read_text()
+            if 'eval "$(starship init zsh)"' in content:
+                content = content.replace('eval "$(starship init zsh)"', '')
+                zshrc_path.write_text(content)
+                logger.info("Removed starship from ~/.zshrc")
+                return True
+
+        logger.warning("Zsh integration not found")
+        return False 
