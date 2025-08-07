@@ -10,6 +10,10 @@ class StarshipInstaller(BaseInstaller):
     def __init__(self, package_name):
         super().__init__(package_name)
         self.binary_name = "starship"
+    
+    # ==========================================
+    # ABSTRACT METHODS - Software installation
+    # ==========================================
 
     def install_software(self):
         """Install Starship using the official installation script"""
@@ -34,10 +38,6 @@ class StarshipInstaller(BaseInstaller):
             logger.error(f"Unsupported OS: {os_type}")
             return False
           
-    def is_software_installed(self):
-        """Check if Starship is installed"""
-        return self._command_exists(self.binary_name)
-    
     def uninstall_software(self):
         """Uninstall Starship"""
         logger.info("Uninstalling Starship...")
@@ -58,7 +58,35 @@ class StarshipInstaller(BaseInstaller):
         else:
             logger.warning("Starship binary not found")
             return True
+    
+    def is_software_installed(self):
+        """Check if Starship is installed"""
+        return self._command_exists(self.binary_name)    
+    
+    # ==========================================
+    # INTEGRATION SETUP - Shell configuration
+    # ==========================================
+    
+    def setup_integration(self):
+        """Setup shell integration for starship prompt."""
+        logger.info("Setting up shell integration...")
         
+        current_shell = self._detect_current_shell()
+        logger.debug(f"Detected shell: {current_shell}")
+        
+        if current_shell == "bash":
+            return self._setup_bash_integration()
+        elif current_shell == "zsh":
+            return self._setup_zsh_integration()
+        else:
+            logger.warning(f"Unsupported shell for auto-config: {current_shell}")
+            logger.info("💡 Manually add: eval \"$(starship init <your-shell>)\" to your shell config")
+            return True  # Not a failure, just manual setup needed
+     
+    # ==========================================
+    # PRIVATE METHODS - Helper functions
+    # ==========================================   
+    
     def _find_starship_binary(self):
         """Find the Starship binary location."""
         import shutil
@@ -67,3 +95,53 @@ class StarshipInstaller(BaseInstaller):
         if binary_location:
             return Path(binary_location)
         return None
+    
+    def _setup_bash_integration(self):
+        """Add starship to ~/.bashrc"""
+        bashrc_path = self.home_dir / '.bashrc'
+        starship_init = 'eval "$(starship init bash)"'
+        
+        try:
+            # Check if already configured
+            if bashrc_path.exists():
+                content = bashrc_path.read_text()
+                if starship_init in content:
+                    logger.info("Bash integration already configured")
+                    return True
+            
+            # Add to .bashrc
+            with bashrc_path.open('a') as f:
+                f.write(f'\n# Starship prompt\n{starship_init}\n')
+            
+            logger.info("Added starship to ~/.bashrc")
+            logger.info("Run 'source ~/.bashrc' or open new terminal")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to setup bash integration: {e}")
+            return False
+    
+    def _setup_zsh_integration(self):
+        """Add starship to ~/.zshrc"""
+        zshrc_path = self.home_dir / '.zshrc'
+        starship_init = 'eval "$(starship init zsh)"'
+        
+        try:
+            # Check if already configured
+            if zshrc_path.exists():
+                content = zshrc_path.read_text()
+                if starship_init in content:
+                    logger.info("Zsh integration already configured")
+                    return True
+            
+            # Add to .zshrc
+            with zshrc_path.open('a') as f:
+                f.write(f'\n# Starship prompt\n{starship_init}\n')
+            
+            logger.info("Added starship to ~/.zshrc")
+            logger.info("Run 'source ~/.zshrc' or open new terminal")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to setup zsh integration: {e}")
+            return False
