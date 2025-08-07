@@ -4,6 +4,8 @@ import argparse
 import logging
 from pathlib import Path
 
+from packages.factory import InstallerFactory
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -98,6 +100,22 @@ def handle_install(package_name):
         logger.info(f"📦 Available packages: {', '.join(packages)}")
         return
     
+    try:
+        installer = InstallerFactory.create_installer(package_name)
+        if not installer.is_software_installed():
+            installer.install_software()
+        else:
+            logger.info(f"{package_name} software already installed")
+
+        installer.install_config()
+
+        logger.info(f"{package_name} installation completed")
+    except ValueError as e:
+        logger.error(f"ValueError: {e}")
+    except Exception as e:
+        logger.error(f"Installation failed: {e}")
+
+
 def main():
     """Main entry point for the dotfiles manager."""
 
