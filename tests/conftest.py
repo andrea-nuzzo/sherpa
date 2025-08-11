@@ -1,14 +1,53 @@
 import pytest
 import tempfile
 import shutil
-from pathlib import Path
-from unittest.mock import Mock, patch
 import sys
 import os
+import logging
+from pathlib import Path
+from unittest.mock import Mock, patch
 
 #  Add the project to the Python path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# ==========================================
+# LOGGING CONFIGURATION
+# ==========================================
+
+@pytest.fixture
+def configure_caplog():
+    """Factory for configuring caplog with different levels"""
+    def _configure(caplog, level='INFO', logger_name=None):
+        level_map = {
+            'DEBUG': logging.DEBUG,
+            'INFO': logging.INFO,
+            'WARNING': logging.WARNING,
+            'ERROR': logging.ERROR,
+            'CRITICAL': logging.CRITICAL
+        }
+        
+        numeric_level = level_map.get(level.upper(), logging.INFO)
+        
+        if logger_name:
+            caplog.set_level(numeric_level, logger=logger_name)
+        else:
+            caplog.set_level(numeric_level)
+        
+        return caplog
+    
+    return _configure
+
+@pytest.fixture
+def caplog_info(caplog):
+    """Pre-configured caplog for INFO level and above"""
+    caplog.set_level(logging.INFO)
+    return caplog
+
+@pytest.fixture
+def caplog_debug(caplog):
+    """Pre-configured caplog for DEBUG level and above"""
+    caplog.set_level(logging.DEBUG)
+    return caplog
 
 # ==========================================
 # FILESYSTEM & DIRECTORIES
@@ -21,14 +60,12 @@ def temp_dir():
     yield temp_path
     shutil.rmtree(temp_path, ignore_errors=True)
 
-
 @pytest.fixture
 def fake_home_dir(temp_dir):
     """Simulate the user's home directory."""
     home_path = temp_dir / "fake_home"
     home_path.mkdir()
     return home_path
-
 
 @pytest.fixture
 def fake_packages_dir(temp_dir):
@@ -61,7 +98,6 @@ class StarshipInstaller(BaseInstaller):
     (starship_config / "starship.toml").write_text("[format]\n# Starship config")
     
     return packages_dir
-
 
 # ==========================================
 # COMMON MOCKS
@@ -98,7 +134,6 @@ def mock_path_home():
             yield mock_home
     return _mock_home
 
-
 # ==========================================
 # APPLICATION SPECIFIC MOCKS
 # ==========================================
@@ -118,18 +153,15 @@ def mock_installer_factory():
         
         yield mock_factory, mock_installer
 
-
 @pytest.fixture
 def sample_packages_list():
     """List of example packages for tests."""
     return ["starship", "git", "zsh", "neovim"]
 
-
 @pytest.fixture
 def empty_packages_list():
     """List of packages to test edge cases."""
     return []
-
 
 # ==========================================
 # ENVIRONMENT & OS MOCKS  
@@ -144,7 +176,6 @@ def mock_detect_os():
             yield mock_os
     return _mock_os
 
-
 @pytest.fixture
 def mock_environment_vars():
     """Mock for environment variables."""
@@ -152,7 +183,6 @@ def mock_environment_vars():
         with patch.dict(os.environ, env_vars):
             yield
     return _mock_env
-
 
 # ==========================================
 # MARKERS CONFIGURATION
@@ -165,7 +195,8 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "e2e: End-to-end tests (slow)")
     config.addinivalue_line("markers", "slow: Tests that take >1 second")
     config.addinivalue_line("markers", "external: Requires external dependencies")
-
+    
+    logging.basicConfig(level=logging.DEBUG)
 
 # ==========================================
 # TEST UTILITIES
@@ -188,6 +219,24 @@ class TestHelpers:
         actual_command = mock_run.call_args[0][0]
         assert expected_command in actual_command
 
+    @staticmethod
+    def configure_caplog_for_logger(caplog, level, logger_name):
+        """Helper to configure caplog for specific logger
+        
+        Args:
+            caplog: pytest caplog fixture
+            level (str): Logging level ('DEBUG', 'INFO', etc.)
+            logger_name (str): Name of the logger to configure
+        """
+        level_map = {
+            'DEBUG': logging.DEBUG,
+            'INFO': logging.INFO,
+            'WARNING': logging.WARNING, 
+            'ERROR': logging.ERROR,
+            'CRITICAL': logging.CRITICAL
+        }
+        caplog.set_level(level_map[level.upper()], logger=logger_name)
+        return caplog
 
 @pytest.fixture
 def helpers():
