@@ -10,6 +10,7 @@ class InstallerFactory:
     
     _package_registry = {
         "starship": "StarshipInstaller",
+        "tmux": "TmuxInstaller",
     }
     
     @classmethod
