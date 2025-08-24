@@ -9,6 +9,7 @@ class InstallerFactory:
     """Factory class for creating package installers dynamically."""
     
     _package_registry = {
+        "pyenv": "PyenvInstaller",
         "starship": "StarshipInstaller",
         "tmux": "TmuxInstaller",
     }

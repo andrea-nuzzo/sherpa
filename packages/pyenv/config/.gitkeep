@@ -1,0 +1,3 @@
+# This directory is required by the BaseInstaller structure
+# Pyenv doesn't typically need config files to be stowed
+# But this ensures the package structure is valid
