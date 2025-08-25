@@ -1,0 +1,16 @@
+{
+  "id": "nvm",
+  "name": "nvm",
+  "category": "core",
+  "summary": "Node Version Manager",
+  "description": "nvm allows you to quickly install and use different versions of node via the command line. It's a POSIX-compliant bash script to manage multiple active node.js versions.",
+  "version": "latest",
+  "homepage": "https://github.com/nvm-sh/nvm",
+  "repository": "https://github.com/nvm-sh/nvm",
+  "installer_class": "NvmInstaller",
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["version-manager", "node", "javascript", "runtime", "core"],
+  "config_files": []
+}
