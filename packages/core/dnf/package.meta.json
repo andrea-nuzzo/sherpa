@@ -1,0 +1,16 @@
+{
+  "id": "dnf",
+  "name": "DNF",
+  "category": "core",
+  "summary": "Dandified YUM package manager for Fedora and RHEL",
+  "description": "DNF (Dandified YUM) is the next-generation package manager for RPM-based Linux distributions like Fedora, CentOS, and RHEL. It's the successor to YUM with improved performance and dependency resolution.",
+  "version": "system",
+  "homepage": "https://dnf.readthedocs.io/",
+  "repository": "https://github.com/rpm-software-management/dnf",
+  "installer_class": "DnfInstaller",
+  "supports": {
+    "os": ["linux"]
+  },
+  "tags": ["package-manager", "fedora", "rhel", "centos", "linux", "core"],
+  "config_files": []
+}
