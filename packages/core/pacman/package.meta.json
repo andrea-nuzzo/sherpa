@@ -1,0 +1,16 @@
+{
+  "id": "pacman",
+  "name": "Pacman",
+  "category": "core",
+  "summary": "The Arch Linux package manager",
+  "description": "Pacman is the package manager for Arch Linux and its derivatives. It combines a simple binary package format with an easy-to-use build system that allows users to build and install packages from source.",
+  "version": "system",
+  "homepage": "https://wiki.archlinux.org/title/Pacman",
+  "repository": "https://gitlab.archlinux.org/pacman/pacman",
+  "installer_class": "PacmanInstaller",
+  "supports": {
+    "os": ["linux"]
+  },
+  "tags": ["package-manager", "arch", "archlinux", "linux", "core"],
+  "config_files": []
+}
