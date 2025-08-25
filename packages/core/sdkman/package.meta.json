@@ -1,0 +1,16 @@
+{
+  "id": "sdkman",
+  "name": "SDKMAN!",
+  "category": "core",
+  "summary": "The Software Development Kit Manager",
+  "description": "SDKMAN! is a tool for managing parallel versions of multiple Software Development Kits on most Unix-based systems. It provides a convenient Command Line Interface (CLI) and API for installing, switching, removing and listing Candidates. Formerly known as GVM the Groovy enVironment Manager.",
+  "version": "latest",
+  "homepage": "https://sdkman.io/",
+  "repository": "https://github.com/sdkman/sdkman-cli",
+  "installer_class": "SdkmanInstaller",
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["version-manager", "java", "scala", "kotlin", "groovy", "jvm", "core"],
+  "config_files": []
+}
