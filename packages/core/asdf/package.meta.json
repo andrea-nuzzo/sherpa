@@ -1,0 +1,16 @@
+{
+  "id": "asdf",
+  "name": "asdf",
+  "category": "core",
+  "summary": "Extendable version manager with support for Ruby, Node.js, Elixir, Erlang & more",
+  "description": "asdf is a CLI tool that can manage multiple language runtime versions on a per-project basis. It is like gvm, nvm, rbenv & pyenv (and more) all in one! Simply install your language's plugin!",
+  "version": "latest",
+  "homepage": "https://asdf-vm.com/",
+  "repository": "https://github.com/asdf-vm/asdf",
+  "installer_class": "AsdfInstaller",
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["version-manager", "polyglot", "runtime", "core"],
+  "config_files": []
+}
