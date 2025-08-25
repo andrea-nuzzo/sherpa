@@ -12,6 +12,7 @@ class InstallerFactory:
         "ghostty": "GhosttyInstaller",
         "lazydocker": "LazydockerInstaller",
         "lazygit": "LazyGitInstaller",
+        "nushell": "NushellInstaller",
         "pyenv": "PyenvInstaller",
         "starship": "StarshipInstaller",
         "tmux": "TmuxInstaller",
