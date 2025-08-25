@@ -1,0 +1,16 @@
+{
+  "id": "brew",
+  "name": "Homebrew",
+  "category": "core",
+  "summary": "The missing package manager for macOS (or Linux)",
+  "description": "Homebrew is a free and open-source software package management system that simplifies the installation of software on Apple's operating system, macOS, as well as Linux.",
+  "version": "latest",
+  "homepage": "https://brew.sh/",
+  "repository": "https://github.com/Homebrew/brew",
+  "installer_class": "BrewInstaller",
+  "supports": {
+    "os": ["macos", "linux"]
+  },
+  "tags": ["package-manager", "macos", "linux", "core"],
+  "config_files": []
+}
