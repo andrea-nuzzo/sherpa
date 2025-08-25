@@ -1,0 +1,17 @@
+{
+  "id": "home-manager",
+  "name": "Home Manager",
+  "category": "core",
+  "summary": "Nix-based user environment management",
+  "description": "Home Manager allows you to declaratively configure your personal shell environment and user services using the Nix package manager. It provides a way to install software packages and manage dotfiles in a reproducible manner.",
+  "version": "latest",
+  "homepage": "https://nix-community.github.io/home-manager/",
+  "repository": "https://github.com/nix-community/home-manager",
+  "installer_class": "HomeManagerInstaller",
+  "requires": ["nix"],
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["package-manager", "nix", "dotfiles", "reproducible", "core"],
+  "config_files": []
+}
