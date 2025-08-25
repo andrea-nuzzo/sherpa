@@ -1,0 +1,16 @@
+{
+  "id": "apt",
+  "name": "APT",
+  "category": "core",
+  "summary": "Advanced Package Tool for Debian and Ubuntu systems",
+  "description": "APT (Advanced Package Tool) is a command-line package management system for Debian-based Linux distributions including Ubuntu. It handles the installation, removal, and maintenance of software packages.",
+  "version": "system",
+  "homepage": "https://wiki.debian.org/Apt",
+  "repository": "https://salsa.debian.org/apt-team/apt",
+  "installer_class": "AptInstaller",
+  "supports": {
+    "os": ["linux"]
+  },
+  "tags": ["package-manager", "debian", "ubuntu", "linux", "core"],
+  "config_files": []
+}
