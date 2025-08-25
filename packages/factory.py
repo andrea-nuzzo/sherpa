@@ -9,6 +9,8 @@ class InstallerFactory:
     """Factory class for creating package installers dynamically."""
     
     _package_registry = {
+        "ghostty": "GhosttyInstaller",
+        "lazydocker": "LazydockerInstaller",
         "lazygit": "LazyGitInstaller",
         "pyenv": "PyenvInstaller",
         "starship": "StarshipInstaller",
