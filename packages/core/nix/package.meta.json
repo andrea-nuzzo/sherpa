@@ -1,0 +1,16 @@
+{
+  "id": "nix",
+  "name": "Nix",
+  "category": "core",
+  "summary": "A powerful package manager that makes package management reliable and reproducible",
+  "description": "Nix is a powerful package manager for Linux and other Unix systems that makes package management reliable and reproducible. It provides atomic upgrades and rollbacks, side-by-side installation of multiple versions of a package, multi-user support, and complete dependencies.",
+  "version": "latest",
+  "homepage": "https://nixos.org/",
+  "repository": "https://github.com/NixOS/nix",
+  "installer_class": "NixInstaller",
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["package-manager", "nix", "reproducible", "functional", "core"],
+  "config_files": []
+}
