@@ -1,0 +1,16 @@
+{
+  "id": "mise",
+  "name": "mise",
+  "category": "core",
+  "summary": "A polyglot runtime manager (successor to rtx)",
+  "description": "mise is a polyglot tool version manager. It replaces tools like nvm, rbenv, pyenv, etc. It's written in Rust and is much faster than the alternatives. Also includes environment management (mise use) and task running (mise run).",
+  "version": "latest",
+  "homepage": "https://mise.jdx.dev/",
+  "repository": "https://github.com/jdx/mise",
+  "installer_class": "MiseInstaller",
+  "supports": {
+    "os": ["linux", "macos"]
+  },
+  "tags": ["version-manager", "runtime", "polyglot", "rust", "core"],
+  "config_files": []
+}
