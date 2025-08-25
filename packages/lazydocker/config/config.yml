@@ -1,0 +1,69 @@
+# lazydocker configuration file
+# See https://github.com/jesseduffield/lazydocker for full documentation
+
+gui:
+  # scroll behavior
+  scrollHeight: 2
+  scrollPastBottom: true
+  
+  # theme
+  theme:
+    activeBorderColor:
+      - green
+      - bold
+    inactiveBorderColor:
+      - default
+    selectedLineBgColor:
+      - blue
+    selectedRangeBgColor:
+      - blue
+    
+  # UI settings
+  sidePanelWidth: 0.3333
+  expandFocusedSidePanel: false
+  screenMode: normal # normal | half | fullscreen
+  
+  # mouse support
+  mouseEvents: true
+  
+  # main panel view
+  mainPanelSplitMode: flexible # flexible | horizontal | vertical
+  
+  # language
+  language: auto # auto | en | pl | zh
+
+# log settings
+logs:
+  timestamps: false
+  since: 60m
+  tail: 200
+
+# confirmation for destructive actions
+confirmOnQuit: false
+
+# refresh
+refreshInterval: 10s # seconds
+
+# docker
+docker:
+  # hide stopped containers
+  hideStoppedContainers: false
+
+# commands
+customCommands:
+  containers:
+    - name: bash
+      attach: true
+      command: bash
+      serviceNames: []
+    - name: sh  
+      attach: true
+      command: sh
+      serviceNames: []
+  services:
+    - name: up
+      command: docker-compose up -d
+      serviceNames: []
+    - name: stop all
+      command: docker-compose stop
+      serviceNames: []
