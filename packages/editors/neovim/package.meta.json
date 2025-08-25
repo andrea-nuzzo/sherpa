@@ -1,0 +1,20 @@
+{
+  "id": "neovim",
+  "name": "Neovim",
+  "category": "editors",
+  "summary": "Hyperextensible Vim-based text editor with LazyVim configuration",
+  "description": "Neovim is a hyperextensible text editor based on Vim. This package includes a complete LazyVim configuration with plugins for Go, Docker, AI, and more.",
+  "version": "0.11.3",
+  "homepage": "https://neovim.io/",
+  "repository": "https://github.com/neovim/neovim",
+  "requires": ["git"],
+  "conflicts": ["vim", "emacs", "vscode"],
+  "supports": {
+    "os": ["macos", "linux", "windows"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["editor", "vim", "lazyvim", "ide", "lua", "plugins"],
+  "installer_class": "NeovimInstaller",
+  "config_files": ["init.lua", "lazy-lock.json", "lazyvim.json", "stylua.toml", "lua/config/*", "lua/plugins/*"],
+  "post_install": "Run 'nvim' to complete plugin installation"
+}
