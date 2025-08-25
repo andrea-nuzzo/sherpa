@@ -2,15 +2,15 @@ import logging
 import os
 import re
 from pathlib import Path
-from ..base import BaseInstaller
+from ...base import BaseInstaller
 
 logger = logging.getLogger(__name__)
 
 class PyenvInstaller(BaseInstaller):
     """Installer for pyenv Python version manager"""
 
-    def __init__(self, package_name):
-        super().__init__(package_name)
+    def __init__(self, package_name, category=None):
+        super().__init__(package_name, category)
         self.binary_name = "pyenv"
         self.pyenv_root = Path.home() / ".pyenv"
     

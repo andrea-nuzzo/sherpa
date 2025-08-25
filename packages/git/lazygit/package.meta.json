@@ -1,0 +1,20 @@
+{
+  "id": "lazygit", 
+  "name": "LazyGit",
+  "category": "git",
+  "summary": "Simple terminal UI for git commands",
+  "description": "A simple terminal UI for git commands, written in Go with the gocui library. Manage your git repos with a simple terminal interface.",
+  "version": "0.44.1",
+  "homepage": "https://github.com/jesseduffield/lazygit",
+  "repository": "https://github.com/jesseduffield/lazygit",
+  "requires": ["git"],
+  "conflicts": ["gitui", "tig"],
+  "supports": {
+    "os": ["macos", "linux", "windows"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["git", "tui", "version-control", "terminal"],
+  "installer_class": "LazyGitInstaller",
+  "config_files": [],
+  "post_install": "Use 'lazygit' in any git repository"
+}

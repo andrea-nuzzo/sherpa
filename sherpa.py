@@ -45,6 +45,20 @@ def create_parser():
         "list",
         help="%(prog)s list ------------------- Show available packages"
     )
+    list_parser.add_argument(
+        "--category", "-c",
+        help="Filter by category (e.g., '1_shell_and_prompt')"
+    )
+    list_parser.add_argument(
+        "--tags", "-t",
+        nargs="+",
+        help="Filter by tags (e.g., 'tui git')"
+    )
+    list_parser.add_argument(
+        "--all-platforms",
+        action="store_true",
+        help="Show packages for all platforms (not just current)"
+    )
     
     install_parser = subparsers.add_parser(
         "install",
@@ -65,51 +79,208 @@ def create_parser():
         "package",
         help="Package name to uninstall (e.g., starship)"
     )
+    
+    info_parser = subparsers.add_parser(
+        "info",
+        help="%(prog)s info <package> - Show detailed package information"
+    )
+    info_parser.add_argument(
+        "package",
+        help="Package name to show info for"
+    )
+    
+    search_parser = subparsers.add_parser(
+        "search",
+        help="%(prog)s search <query> - Search packages"
+    )
+    search_parser.add_argument(
+        "query",
+        nargs="?",
+        default="",
+        help="Search query (searches name, summary, description, tags)"
+    )
+    search_parser.add_argument(
+        "--category", "-c",
+        help="Filter by category"
+    )
+    search_parser.add_argument(
+        "--tags", "-t",
+        nargs="+",
+        help="Filter by tags"
+    )
 
     return parser
 
-def get_available_packages():
-    """Return a list of available packages."""
+def handle_info(args):
+    """Handle the info command - show detailed package information."""
+    try:
+        metadata = InstallerFactory.get_package_metadata(args.package)
+        
+        category_display = metadata.category.replace('_', ' ').title().replace(' And ', ' & ')
+        tags_display = ', '.join(metadata.tags) if metadata.tags else 'none'
+        requires_display = ', '.join(metadata.requires) if metadata.requires else 'none'
+        conflicts_display = ', '.join(metadata.conflicts) if metadata.conflicts else 'none'
+        
+        print(f"📦 {metadata.name} ({metadata.id})")
+        print(f"Category: {category_display}")
+        print(f"Summary: {metadata.summary}")
+        print(f"Description: {metadata.description}")
+        print(f"Version: {metadata.version}")
+        print(f"Tags: {tags_display}")
+        print(f"Requires: {requires_display}")
+        print(f"Conflicts: {conflicts_display}")
+        
+        if metadata.homepage:
+            print(f"Homepage: {metadata.homepage}")
+        if metadata.repository:
+            print(f"Repository: {metadata.repository}")
+        
+        # Platform support
+        if metadata.supports:
+            supported_os = ', '.join(metadata.supports.get('os', [])) or 'all'
+            supported_arch = ', '.join(metadata.supports.get('arch', [])) or 'all'
+            print(f"Supported OS: {supported_os}")
+            print(f"Supported Architecture: {supported_arch}")
+        
+        # Config files
+        if metadata.config_files:
+            print(f"Config files: {', '.join(metadata.config_files)}")
+        
+        # Post-install message
+        if metadata.post_install:
+            print(f"\n💡 {metadata.post_install}")
+            
+    except ValueError as e:
+        print(f"Package not found: {e}")
+        available_packages = InstallerFactory.get_available_packages()
+        print(f"Available packages: {', '.join(available_packages)}")
+    except Exception as e:
+        logger.error(f"Error getting package info: {e}")
+        print("Error retrieving package information.")
 
-    packages_dir = Path("packages")
-    available_packages = []
-    
-    if not packages_dir.exists():
-        return available_packages
-    
-    for package in packages_dir.iterdir():
-        if package.is_dir():
-            installer_file = package / "installer.py"
-            config_dir = package / "config"
+def handle_search(args):
+    """Handle the search command - search packages by query, category, and tags."""
+    try:
+        results = InstallerFactory.search_packages(
+            query=args.query,
+            category=args.category,
+            tags=args.tags
+        )
+        
+        if results:
+            print(f"🔍 Found {len(results)} packages matching criteria:\n")
+            for metadata in results:
+                category_display = metadata.category.replace('_', ' ').title().replace(' And ', ' & ')
+                tags_display = ', '.join(metadata.tags) if metadata.tags else 'none'
+                print(f"• {metadata.name} ({metadata.id})")
+                print(f"  Category: {category_display}")
+                print(f"  Summary: {metadata.summary}")
+                print(f"  Tags: {tags_display}")
+                print()
+        else:
+            print("No packages found matching criteria.")
+            
+    except Exception as e:
+        logger.error(f"Error searching packages: {e}")
+        print("Error searching packages.")
 
-            if installer_file.exists() and config_dir.exists():
-                available_packages.append(package.name)
+def handle_list(args):
+    """Handle the list command - show available packages with filtering options."""
+    try:
+        platform_filter = not args.all_platforms
+        
+        if args.category or args.tags:
+            # Use search functionality for filtering
+            results = InstallerFactory.search_packages(
+                category=args.category,
+                tags=args.tags,
+                platform_filter=platform_filter
+            )
+            
+            if results:
+                print(f"📦 Found {len(results)} packages:\n")
+                for metadata in results:
+                    category_display = metadata.category.replace('_', ' ').title().replace(' And ', ' & ')
+                    tags_display = ', '.join(metadata.tags) if metadata.tags else 'none'
+                    print(f"• {metadata.name} ({metadata.id})")
+                    print(f"  Category: {category_display}")
+                    print(f"  Summary: {metadata.summary}")
+                    print(f"  Tags: {tags_display}")
+                    print(f"  Version: {metadata.version}")
+                    print()
+            else:
+                print("No packages found matching criteria.")
+        else:
+            # Show all packages by category
+            packages_by_category = InstallerFactory.get_packages_by_category(platform_filter=platform_filter)
+            
+            if packages_by_category:
+                print("📦 Available packages by category:\n")
                 
-    return sorted(available_packages)
-
-def handle_list():
-    """Handle the list command - show available packages."""
-    available_packages = get_available_packages()
-    
-    if available_packages:
-        print("📦 Available packages:")
-        for package in available_packages:
-            print(f"  • {package}")
-        print(f"\n💡 Use 'sherpa install <package>' to install")
-    else:
-        print("No packages available.")
-        print("Create packages in: packages/<name>/installer.py + packages/<name>/config/")
+                for category, package_ids in packages_by_category.items():
+                    description = InstallerFactory.get_category_description(category)
+                    category_display = category.replace('_', ' ').title().replace(' And ', ' & ')
+                    
+                    print(f"🔧 {category_display}")
+                    print(f"   {description}")
+                    
+                    for package_id in package_ids:
+                        try:
+                            metadata = InstallerFactory.get_package_metadata(package_id)
+                            print(f"   • {metadata.name} ({package_id}) - {metadata.summary}")
+                        except Exception:
+                            print(f"   • {package_id}")
+                    print()
+                
+                print("💡 Use 'sherpa install <package>' to install")
+                print("💡 Use 'sherpa info <package>' for detailed information")
+            else:
+                print("No packages available for current platform.")
+                if platform_filter:
+                    print("Use --all-platforms to see packages for other platforms.")
+    except Exception as e:
+        logger.error(f"Error listing packages: {e}")
+        print("Error listing packages. Please check your package structure.")
 
 def handle_install(package_name):
     """Install a specified package by name"""
-    packages  = get_available_packages()
+    available_packages = InstallerFactory.get_available_packages()
     
-    if package_name not in packages:
+    if package_name not in available_packages:
         logger.info(f"Package '{package_name}' is not available.")
-        logger.info(f"📦 Available packages: {', '.join(packages)}")
+        logger.info(f"📦 Available packages: {', '.join(available_packages)}")
         return
     
     try:
+        # Validate dependencies and conflicts before installation
+        # For now, we'll simulate installed packages - in the future this could check actual system state
+        installed_packages = []  # TODO: Implement actual installed package detection
+        
+        validation_issues = InstallerFactory.validate_dependencies_and_conflicts(package_name, installed_packages)
+        
+        # Check for missing dependencies
+        if validation_issues["missing_dependencies"]:
+            print(f"⚠️  Missing dependencies for {package_name}:")
+            for dep in validation_issues["missing_dependencies"]:
+                print(f"   • {dep}")
+            print("Please install dependencies first or use automated dependency resolution in the future.")
+            return
+        
+        # Check for conflicts
+        if validation_issues["conflicts"]:
+            print(f"⚠️  Conflicts detected for {package_name}:")
+            for conflict in validation_issues["conflicts"]:
+                print(f"   • Conflicts with {conflict}")
+            print("Please remove conflicting packages first.")
+            return
+        
+        # Show warnings
+        if validation_issues["warnings"]:
+            print(f"⚠️  Warnings for {package_name}:")
+            for warning in validation_issues["warnings"]:
+                print(f"   • {warning}")
+            print("Proceeding anyway...")
+        
         installer = InstallerFactory.create_installer(package_name)
         
         # 1. Install software (binary/package)
@@ -132,11 +303,11 @@ def handle_install(package_name):
 
 def handle_remove(package_name):
     """Remove a specified package by name"""
-    packages = get_available_packages()
+    available_packages = InstallerFactory.get_available_packages()
 
-    if package_name not in packages:
+    if package_name not in available_packages:
         logger.info(f"Package '{package_name}' is not available.")
-        logger.info(f"📦 Available packages: {', '.join(packages)}")
+        logger.info(f"📦 Available packages: {', '.join(available_packages)}")
         return
 
     try:
@@ -171,7 +342,15 @@ def main():
 
     # Dispatcher for commands
     if args.command == "list":
-        handle_list()
+        handle_list(args)
+        return 0
+    
+    elif args.command == "info":
+        handle_info(args)
+        return 0
+    
+    elif args.command == "search":
+        handle_search(args)
         return 0
     
     elif args.command == "install":

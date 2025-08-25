@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
-from ..base import BaseInstaller
+from ...base import BaseInstaller
 
 logger = logging.getLogger(__name__)
 
 class LazydockerInstaller(BaseInstaller):
     """Installer for lazydocker - A simple terminal UI for docker and docker-compose"""
 
-    def __init__(self, package_name):
-        super().__init__(package_name)
+    def __init__(self, package_name, category=None):
+        super().__init__(package_name, category)
         self.binary_name = "lazydocker"
     
     def install_software(self):

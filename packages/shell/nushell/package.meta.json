@@ -1,0 +1,20 @@
+{
+  "id": "nushell",
+  "name": "Nushell",
+  "category": "shell", 
+  "summary": "A new type of shell with structured data support",
+  "description": "Nushell is a modern shell that treats data as structured, making it easier to work with APIs, JSON, CSV, and other data formats.",
+  "version": "0.95.0",
+  "homepage": "https://www.nushell.sh/",
+  "repository": "https://github.com/nushell/nushell",
+  "requires": [],
+  "conflicts": ["bash", "zsh", "fish"],
+  "supports": {
+    "os": ["macos", "linux", "windows"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["shell", "data", "modern", "structured"],
+  "installer_class": "NushellInstaller",
+  "config_files": ["config.nu", "env.nu"],
+  "post_install": "Add to /etc/shells and set as default shell if desired"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "tmux",
+  "name": "tmux",
+  "category": "terminal", 
+  "summary": "Terminal multiplexer for managing multiple terminal sessions",
+  "description": "tmux is a terminal multiplexer that lets you switch easily between several programs in one terminal, detach them and reattach them to a different terminal.",
+  "version": "3.4",
+  "homepage": "https://github.com/tmux/tmux",
+  "repository": "https://github.com/tmux/tmux",
+  "requires": [],
+  "conflicts": ["screen", "zellij"],
+  "supports": {
+    "os": ["macos", "linux"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["multiplexer", "sessions", "terminal", "productivity"],
+  "installer_class": "TmuxInstaller",
+  "config_files": ["tmux.conf", "tmux.reset.conf"],
+  "post_install": "Use 'tmux' to start a new session"
+}

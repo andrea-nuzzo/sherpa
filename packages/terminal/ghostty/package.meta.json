@@ -1,0 +1,20 @@
+{
+  "id": "ghostty",
+  "name": "Ghostty", 
+  "category": "terminal",
+  "summary": "Fast, feature-rich, and cross-platform terminal emulator",
+  "description": "A fast, feature-rich, and cross-platform terminal emulator written in Zig, designed to be the fastest terminal emulator in existence.",
+  "version": "1.0.0",
+  "homepage": "https://ghostty.org/",
+  "repository": "https://github.com/ghostty-org/ghostty",
+  "requires": [],
+  "conflicts": ["iterm2", "alacritty", "wezterm"],
+  "supports": {
+    "os": ["macos", "linux"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["terminal", "fast", "modern", "zig"],
+  "installer_class": "GhosttyInstaller",
+  "config_files": ["config"],
+  "post_install": "Configure as default terminal if desired"
+}

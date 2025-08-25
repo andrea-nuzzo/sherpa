@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
-from ..base import BaseInstaller
+from ...base import BaseInstaller
 
 logger = logging.getLogger(__name__)
 
 class NushellInstaller(BaseInstaller):
     """Installer for Nushell - A new type of shell with structured data support"""
 
-    def __init__(self, package_name):
-        super().__init__(package_name)
+    def __init__(self, package_name, category=None):
+        super().__init__(package_name, category)
         self.binary_name = "nu"
     
     def install_software(self):

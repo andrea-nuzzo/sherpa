@@ -1,0 +1,20 @@
+{
+  "id": "pyenv",
+  "name": "pyenv",
+  "category": "runtimes",
+  "summary": "Python version management tool",
+  "description": "pyenv lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools.",
+  "version": "2.4.0",
+  "homepage": "https://github.com/pyenv/pyenv",
+  "repository": "https://github.com/pyenv/pyenv",
+  "requires": [],
+  "conflicts": ["mise", "asdf"],
+  "supports": {
+    "os": ["macos", "linux"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["python", "version-manager", "runtime"],
+  "installer_class": "PyenvInstaller",
+  "config_files": [".gitkeep"],
+  "post_install": "Shell integration setup required for version switching"
+}

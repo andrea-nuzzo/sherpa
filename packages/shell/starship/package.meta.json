@@ -1,0 +1,20 @@
+{
+  "id": "starship",
+  "name": "Starship",
+  "category": "shell",
+  "summary": "Minimal, blazing-fast, and infinitely customizable prompt for any shell",
+  "description": "The minimal, blazing-fast, and infinitely customizable prompt for any shell! Works with bash, zsh, fish, and more.",
+  "version": "1.19.0",
+  "homepage": "https://starship.rs/",
+  "repository": "https://github.com/starship/starship",
+  "requires": [],
+  "conflicts": [],
+  "supports": {
+    "os": ["macos", "linux", "windows"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["prompt", "customizable", "fast", "cross-shell"],
+  "installer_class": "StarshipInstaller",
+  "config_files": ["starship.toml"],
+  "post_install": "Shell integration setup required"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "lazydocker",
+  "name": "LazyDocker", 
+  "category": "containers",
+  "summary": "Simple terminal UI for Docker and Docker Compose",
+  "description": "A simple terminal UI for both Docker and Docker-compose, written in Go with the gocui library. Manage your containers, images, and compose services with ease.",
+  "version": "0.23.3",
+  "homepage": "https://github.com/jesseduffield/lazydocker",
+  "repository": "https://github.com/jesseduffield/lazydocker",
+  "requires": ["docker"],
+  "conflicts": [],
+  "supports": {
+    "os": ["macos", "linux", "windows"],
+    "arch": ["arm64", "x86_64"]
+  },
+  "tags": ["docker", "containers", "tui", "docker-compose"],
+  "installer_class": "LazydockerInstaller",
+  "config_files": ["config.yml"],
+  "post_install": "Use 'lazydocker' to manage Docker containers"
+}

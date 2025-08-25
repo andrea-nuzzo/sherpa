@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
-from ..base import BaseInstaller
+from ...base import BaseInstaller
 
 logger = logging.getLogger(__name__)
 
 class TmuxInstaller(BaseInstaller):
     """Installer for tmux terminal multiplexer"""
 
-    def __init__(self, package_name):
-        super().__init__(package_name)
+    def __init__(self, package_name, category=None):
+        super().__init__(package_name, category)
         self.binary_name = "tmux"
     
     def install_software(self):

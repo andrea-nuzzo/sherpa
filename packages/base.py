@@ -12,13 +12,24 @@ logger = logging.getLogger(__name__)
 class BaseInstaller(ABC):
     """Abstract base class for all package installers."""
     
-    def __init__(self, package_name):
+    def __init__(self, package_name, category=None):
         self.package_name = package_name
-        self.package_dir = Path("packages") / package_name
+        
+        # For backward compatibility, try to discover category if not provided
+        if category is None:
+            category = self._discover_package_category(package_name)
+        
+        self.category = category
+        if category:
+            self.package_dir = Path("packages") / category / package_name
+        else:
+            # Fallback to old flat structure
+            self.package_dir = Path("packages") / package_name
+        
         self.config_dir = self.package_dir / "config"
         self.home_dir = Path.home()
 
-        logger.debug(f"Initializing installer for {package_name}")
+        logger.debug(f"Initializing installer for {package_name} in category {category}")
         
         # Validate package structure
         if not self.package_dir.exists():
@@ -27,6 +38,21 @@ class BaseInstaller(ABC):
             raise FileNotFoundError(f"Config directory not found: {self.config_dir}")
             
         logger.info(f"Package {package_name} structure validated")
+    
+    def _discover_package_category(self, package_name):
+        """Discover which category a package belongs to."""
+        packages_dir = Path("packages")
+        
+        # Look through category directories
+        for category_dir in packages_dir.iterdir():
+            if not category_dir.is_dir() or category_dir.name.startswith("__") or category_dir.name.endswith(".py"):
+                continue
+            
+            package_dir = category_dir / package_name
+            if package_dir.exists() and (package_dir / "installer.py").exists():
+                return category_dir.name
+        
+        return None
     
     # ==========================================
     # ABSTRACT METHODS - Must be implemented by subclasses
